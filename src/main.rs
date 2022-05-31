@@ -4,7 +4,7 @@ use rustls::{self};
 use structopt::StructOpt;
 use tokio::{self};
 
-static ALPN: &[u8] = b"h3";
+static ALPN: &[u8] = b"h3-25";
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "server")]
@@ -62,6 +62,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 eprintln!("coundn't load any default trust roots: {}", e);
             }
         }
+        // roots.add(&rustls::Certificate(std::fs::read("cert.der")?))?;
         tls_config_builder
             .with_root_certificates(roots)
             .with_no_client_auth()
@@ -70,9 +71,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tls_config.alpn_protocols = vec![ALPN.into()];
     let client_config = quinn::ClientConfig::new(Arc::new(tls_config));
 
-    let mut client_endpoint = h3_quinn::quinn::Endpoint::client("[::]:0".parse().unwrap())?;
+    let mut client_endpoint = h3_quinn::quinn::Endpoint::client("0.0.0.0:0".parse().unwrap())?;
     client_endpoint.set_default_client_config(client_config);
-    let quinn_conn = h3_quinn::Connection::new(client_endpoint.connect(addr, auth.host())?.await?);
+    let e = client_endpoint.connect(addr, auth.host()).unwrap().await;
+    eprintln!("{:?}", e);
+
+    //let quinn_conn = h3_quinn::Connection::new(client_endpoint.connect(addr, auth.host())?.await?);
 
     eprintln!("QUIC connected ...");
 

@@ -6,6 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+bytes = "1"
+futures = "0.3"
 h3 = { git = "https://github.com/hyperium/h3" }
 h3-quinn = { git = "https://github.com/hyperium/h3" }
 http = "0.2.7"
@@ -14,4 +16,9 @@ rustls = { version = "0.20", features = ["quic"] }
 rustls-native-certs = "0.6.2"
 structopt = "0.3.26"
 tokio = { version = "1.18", features = ["full"] }
+tracing = "0.1.10"
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt", "ansi", "env-filter", "time", "tracing-log"] }
+
+[[bin]]
+name = "server"
+path = "src/server.rs"
